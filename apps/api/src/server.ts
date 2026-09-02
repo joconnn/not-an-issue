@@ -1,14 +1,10 @@
-import Fastify from "fastify";
+import { buildApplication } from "./app";
 
-const fastify = Fastify({ logger: true });
+const app = buildApplication();
 
-fastify.get("/", function (request, reply) {
-  reply.send({ hello: "world" });
-});
-
-fastify.listen({ port: 3000 }, function (err, address) {
+app.listen({ port: 3000 }, function (err, address) {
   if (err) {
-    fastify.log.error(err);
+    app.log.error(err);
     process.exit(1);
   }
   console.log(`Server is now listening on ${address}`);
