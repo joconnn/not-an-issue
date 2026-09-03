@@ -1,6 +1,6 @@
 import Fastify from "fastify";
 import { fromNodeHeaders } from "better-auth/node";
-import { auth } from "../lib/auth";
+import { auth } from "./lib/auth.js";
 
 export function buildApplication() {
   const app = Fastify({ logger: true });
@@ -43,7 +43,7 @@ export function buildApplication() {
         response.headers.forEach((value, key) => reply.header(key, value));
         return reply.send(response.body ? await response.text() : null);
       } catch (error) {
-        app.log.error("Authentication Error:", error);
+        app.log.error({ err: error }, "Authentication error");
         return reply.status(500).send({
           error: "Internal authentication error",
           code: "AUTH_FAILURE",

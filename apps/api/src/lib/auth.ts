@@ -1,5 +1,5 @@
 import { betterAuth } from "better-auth";
-import { pool } from "../../../packages/db";
+import { pool } from "@not-an-issue/db";
 
 export const auth = betterAuth({
   database: pool,

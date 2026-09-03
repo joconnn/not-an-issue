@@ -1,2 +1,2 @@
-export { db, pool } from "./database";
-export type { Database } from "./types";
+export { db, pool } from "./database.js";
+export type { Database } from "./types.js";
