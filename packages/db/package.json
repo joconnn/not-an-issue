@@ -4,7 +4,8 @@
   "type": "module",
   "scripts": {
     "build": "tsc",
-    "typecheck": "tsc --noEmit"
+    "typecheck": "tsc --noEmit",
+    "migrate": "node --env-file-if-exists=../../.env --import tsx migrate.ts"
   },
   "main": "./dist/index.js",
   "types": "./dist/index.d.ts",
@@ -22,6 +23,7 @@
   "devDependencies": {
     "@types/node": "^24.13.3",
     "@types/pg": "^8.23.1",
+    "tsx": "^4.23.13",
     "typescript": "~6.0.3"
   }
 }
