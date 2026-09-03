@@ -15,7 +15,7 @@ const migrator = new Migrator({
   provider: new FileMigrationProvider({
     fs,
     path,
-    migrationFolder: path.join(__dirname, "./migrations"),
+    migrationFolder: path.join(import.meta.dirname, "migrations"),
   }),
 });
 
