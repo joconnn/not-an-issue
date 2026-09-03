@@ -5,7 +5,14 @@
   "scripts": {
     "build": "tsc",
     "typecheck": "tsc --noEmit",
-    "migrate": "node --env-file-if-exists=../../.env --import tsx migrate.ts"
+    "migrate": "node --env-file-if-exists=../../.env --import tsx migrate.ts",
+    "codegen":  "kysely-codegen"
+  },
+  "kysely-codegen": {
+    "dialect": "postgres",
+    "envFile": "../../.env",
+    "outFile": "./types.ts",
+    "includePattern": "public.+(workspace|workspace_member|project|issue|comment)"
   },
   "main": "./dist/index.js",
   "types": "./dist/index.d.ts",
@@ -23,6 +30,7 @@
   "devDependencies": {
     "@types/node": "^24.13.3",
     "@types/pg": "^8.23.1",
+    "kysely-codegen": "^0.20.0",
     "tsx": "^4.23.13",
     "typescript": "~6.0.3"
   }

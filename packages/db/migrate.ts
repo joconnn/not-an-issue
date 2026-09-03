@@ -20,7 +20,11 @@ const migrator = new Migrator({
 });
 
 async function migrateToLatest() {
-  const { error, results } = await migrator.migrateToLatest();
+  const operation = process.argv[2];
+  const { error, results } =
+    operation === "down"
+      ? await migrator.migrateDown()
+      : await migrator.migrateToLatest();
 
   results?.forEach((it) => {
     if (it.status === "Success") {
