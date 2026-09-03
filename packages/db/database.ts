@@ -1,14 +1,20 @@
 import "dotenv/config";
-import { Pool } from "pg";
 import { Kysely, PostgresDialect } from "kysely";
-import { Database } from "./types";
+import { Pool } from "pg";
+import type { Database } from "./types";
 
-const dbConnectionString = process.env.DATABASE_URL!;
+const connectionString = process.env.DATABASE_URL;
+
+if (!connectionString) {
+  throw new Error("DATABASE_URL is not set");
+}
+// We export pool so betterauth can use the db pool
+export const pool = new Pool({
+  connectionString,
+});
 
 const dialect = new PostgresDialect({
-  pool: new Pool({
-    connectionString: dbConnectionString,
-  }),
+  pool,
 });
 
 export const db = new Kysely<Database>({

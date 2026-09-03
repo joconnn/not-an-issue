@@ -10,8 +10,6 @@ export interface WorkspaceTable {
   created_at: Generated<Date>;
 }
 
-export interface MembershipTable {}
-
 export type Workspace = Selectable<WorkspaceTable>;
 export type NewWorkspace = Insertable<WorkspaceTable>;
 export type WorkspaceUpdate = Updateable<WorkspaceTable>;

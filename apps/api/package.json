@@ -1,6 +1,7 @@
 {
   "name": "@not-an-issue/api",
   "private": true,
+  "type": "module",
   "scripts": {
     "dev": "tsx watch src/server.ts",
     "build": "tsc",
@@ -9,6 +10,8 @@
     "test": "vitest run"
   },
   "dependencies": {
+    "@fastify/cors": "^11.3.0",
+    "better-auth": "^1.7.2",
     "fastify": "^5.12.1"
   },
   "devDependencies": {
