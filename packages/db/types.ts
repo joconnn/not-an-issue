@@ -9,9 +9,38 @@ export type Generated<T> = T extends ColumnType<infer S, infer I, infer U>
   ? ColumnType<S, I | undefined, U>
   : ColumnType<T, T | undefined, T>;
 
+export type IssueStatus = "closed" | "open";
+
 export type Timestamp = ColumnType<Date, Date | string, Date | string>;
 
 export type WorkspaceRole = "member" | "owner" | "viewer";
+
+export interface Comment {
+  author_id: string | null;
+  body: string;
+  created_at: Generated<Timestamp>;
+  id: Generated<string>;
+  issue_id: string;
+  updated_at: Generated<Timestamp>;
+}
+
+export interface Issue {
+  created_at: Generated<Timestamp>;
+  created_by: string | null;
+  description: string | null;
+  id: Generated<string>;
+  project_id: string;
+  status: Generated<IssueStatus>;
+  title: string;
+  updated_at: Generated<Timestamp>;
+}
+
+export interface Project {
+  created_at: Generated<Timestamp>;
+  id: Generated<string>;
+  name: string;
+  workspace_id: string;
+}
 
 export interface Workspace {
   created_at: Generated<Timestamp>;
@@ -27,6 +56,9 @@ export interface WorkspaceMember {
 }
 
 export interface DB {
+  comment: Comment;
+  issue: Issue;
+  project: Project;
   workspace: Workspace;
   workspace_member: WorkspaceMember;
 }

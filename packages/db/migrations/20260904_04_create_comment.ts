@@ -1,44 +1,38 @@
 import { type Kysely, sql } from "kysely";
 
-export async function up(db: Kysely<unknown>): Promise<void> {
+export async function up(db: Kysely<any>): Promise<void> {
   await db.schema
     .createTable("comment")
-    // TODO: id
-    // - uuid
-    // - primary key
-    // - gen_random_uuid() default
-
-    // TODO: issue_id
-    // - uuid
-    // - not null
-    // - references issue.id
-    // - cascade on delete
-
-    // TODO: author_id
-    // - text
-    // - nullable
-    // - references user.id
-    // - set null on delete
-
-    // TODO: body
-    // - text
-    // - not null
-
-    // TODO: created_at
-    // - timestamptz
-    // - not null
-    // - CURRENT_TIMESTAMP default
-
-    // TODO: updated_at
-    // - timestamptz
-    // - not null
-    // - CURRENT_TIMESTAMP default
+    .addColumn("id", "uuid", (col) =>
+      col.primaryKey().defaultTo(sql`gen_random_uuid()`),
+    )
+    .addColumn("issue_id", "uuid", (col) =>
+      col.notNull().references("issue.id").onDelete("cascade"),
+    )
+    .addColumn("author_id", "text", (col) =>
+      col.references("user.id").onDelete("set null"),
+    )
+    .addColumn("body", "text", (col) => col.notNull())
+    .addColumn("created_at", "timestamptz", (col) =>
+      col.notNull().defaultTo(sql`CURRENT_TIMESTAMP`),
+    )
+    .addColumn("updated_at", "timestamptz", (col) =>
+      col.notNull().defaultTo(sql`CURRENT_TIMESTAMP`),
+    )
     .execute();
 
-  // TODO: Create comment_issue_id_idx on issue_id
-  // TODO: Create comment_author_id_idx on author_id
+  await db.schema
+    .createIndex("comment_issue_id_idx")
+    .on("comment")
+    .column("issue_id")
+    .execute();
+  await db.schema
+    .createIndex("comment_author_id_idx")
+    .on("comment")
+    .column("author_id")
+    .execute();
 }
 
-export async function down(db: Kysely<unknown>): Promise<void> {
-  // TODO: Drop comment
+export async function down(db: Kysely<any>): Promise<void> {
+  await db.schema.dropTable("comment").execute();
 }
