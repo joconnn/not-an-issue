@@ -6,7 +6,8 @@
     "build": "tsc",
     "typecheck": "tsc --noEmit",
     "migrate": "node --env-file-if-exists=../../.env --import tsx migrate.ts",
-    "codegen":  "kysely-codegen"
+    "codegen": "kysely-codegen",
+    "codegen:check": "kysely-codegen --verify"
   },
   "kysely-codegen": {
     "dialect": "postgres",
