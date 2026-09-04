@@ -10,9 +10,6 @@ export async function up(db: Kysely<any>): Promise<void> {
     .addColumn("created_at", "timestamptz", (col) =>
       col.defaultTo(sql`CURRENT_TIMESTAMP`).notNull(),
     )
-    .addColumn("user_id", "text", (col) =>
-      col.notNull().references("user.id").onDelete("cascade"),
-    )
     .execute();
 }
 

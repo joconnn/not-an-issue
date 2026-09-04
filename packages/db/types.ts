@@ -11,13 +11,22 @@ export type Generated<T> = T extends ColumnType<infer S, infer I, infer U>
 
 export type Timestamp = ColumnType<Date, Date | string, Date | string>;
 
+export type WorkspaceRole = "member" | "owner" | "viewer";
+
 export interface Workspace {
   created_at: Generated<Timestamp>;
   id: Generated<string>;
   name: string;
+}
+
+export interface WorkspaceMember {
+  created_at: Generated<Timestamp>;
+  role: WorkspaceRole;
   user_id: string;
+  workspace_id: string;
 }
 
 export interface DB {
   workspace: Workspace;
+  workspace_member: WorkspaceMember;
 }
