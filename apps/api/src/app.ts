@@ -1,5 +1,6 @@
 import Fastify from "fastify";
-import { authRoutes } from "./modules/auth/auth.routes.js";
+import { authRoutes } from "./modules/auth/index.js";
+import { protectedRoutes } from "./routes/protected.routes.js";
 
 export function buildApplication() {
   const app = Fastify({ logger: true });
@@ -9,6 +10,10 @@ export function buildApplication() {
   });
 
   app.register(authRoutes, {
+    prefix: "/api",
+  });
+
+  app.register(protectedRoutes, {
     prefix: "/api",
   });
 

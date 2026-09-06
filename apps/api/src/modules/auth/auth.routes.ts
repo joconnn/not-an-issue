@@ -1,18 +1,8 @@
 import type { FastifyPluginAsync } from "fastify";
-import { auth } from "../../lib/auth.js";
 import { fromNodeHeaders } from "better-auth/node";
+import { auth } from "../../lib/auth.js";
 
 export const authRoutes: FastifyPluginAsync = async (app) => {
-  app.get("/me", async (request, reply) => {
-    const session = await auth.api.getSession({
-      headers: fromNodeHeaders(request.headers),
-    });
-    if (!session) {
-      return reply.status(401).send({ error: "Unauthorized" });
-    }
-    return reply.send(session);
-  });
-
   app.route({
     method: ["GET", "POST"],
     url: "/auth/*",
