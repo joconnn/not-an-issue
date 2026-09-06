@@ -7,7 +7,7 @@
     "build": "tsc",
     "start": "node dist/server.js",
     "typecheck": "tsc --noEmit",
-    "test": "vitest run"
+    "test": "dotenv -e ../../.env -- vitest run"
   },
   "dependencies": {
     "@fastify/cors": "^11.3.0",
@@ -17,6 +17,7 @@
   },
   "devDependencies": {
     "@types/node": "^24.13.3",
+    "dotenv-cli": "^11.0.0",
     "tsx": "^4.23.13",
     "typescript": "~6.0.3",
     "vitest": "^4.1.11"

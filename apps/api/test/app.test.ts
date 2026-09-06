@@ -33,6 +33,6 @@ test("GET request to an unknown route", async () => {
     });
     expect(response.statusCode).toBe(404);
   } finally {
-    app.close();
+    await app.close();
   }
 });
