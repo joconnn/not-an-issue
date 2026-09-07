@@ -3,20 +3,18 @@
 // The route has the user and needs to pass this down to service
 // Validate at the data layer as they say
 
-import { CreateWorkspaceUser } from "./types.js";
 import { db } from "@not-an-issue/db";
+import { CreateWorkspaceInput } from "./types.js";
 
 class WorkspaceService {
-  async createWorkspace({ user, name }: CreateWorkspaceUser) {
-    const userId = user.id;
-
+  async createWorkspace({ userId, name }: CreateWorkspaceInput) {
     const data = await db.transaction().execute(async (trx) => {
       const workspace = await trx
         .insertInto("workspace")
         .values({
           name,
         })
-        .returning("id")
+        .returningAll()
         .executeTakeFirstOrThrow();
 
       await trx

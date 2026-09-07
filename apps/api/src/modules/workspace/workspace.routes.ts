@@ -12,10 +12,13 @@ export const workspaceRoutes: FastifyPluginAsyncTypebox = async (app) => {
     },
     async (request, reply) => {
       const { name } = request.body;
-      const user = request.authSession.user;
+      const userId = request.authSession.user.id;
 
-      const workspace = await workspaceService.createWorkspace({ user, name });
-      return reply.send(workspace);
+      const workspace = await workspaceService.createWorkspace({
+        userId,
+        name,
+      });
+      return reply.code(201).send(workspace);
     },
   );
 };
