@@ -1,6 +1,6 @@
 import { test, expect } from "vitest";
 import { buildApplication } from "../src/app";
-test("unauthenticated user GET /api/me returns status code '404", async () => {
+test("unauthenticated user GET /api/me returns status code '401", async () => {
   const app = buildApplication();
 
   try {
@@ -10,10 +10,10 @@ test("unauthenticated user GET /api/me returns status code '404", async () => {
     });
 
     expect(response.statusCode).toBe(401);
-    expect(response.json).toBe({
+    expect(response.json()).toEqual({
       error: "Unauthorized",
     });
-  } catch {
+  } finally {
     await app.close();
   }
 });

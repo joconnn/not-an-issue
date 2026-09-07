@@ -1,7 +1,7 @@
 {
   "name": "not-an-issue",
   "private": true,
-  "packageManager": "pnpm@11.19.0",
+  "packageManager": "pnpm@12.3.4",
   "scripts": {
     "dev": "turbo dev",
     "build": "turbo build",

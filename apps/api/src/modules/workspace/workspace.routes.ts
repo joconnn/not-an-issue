@@ -1,3 +1,21 @@
-// POST /workspace - create workspace and workspace member owner
-// Workspace Input: name -> string
-// Workspace Member Input: workspace.id, user.id, role = 'owner'
+import { type FastifyPluginAsyncTypebox } from "@fastify/type-provider-typebox";
+import { workspaceService } from "./workspace.service.js";
+import { CreateWorkspaceBody } from "./workspace.schema.js";
+
+export const workspaceRoutes: FastifyPluginAsyncTypebox = async (app) => {
+  app.post(
+    "/",
+    {
+      schema: {
+        body: CreateWorkspaceBody,
+      },
+    },
+    async (request, reply) => {
+      const { name } = request.body;
+      const user = request.authSession.user;
+
+      const workspace = await workspaceService.createWorkspace({ user, name });
+      return reply.send(workspace);
+    },
+  );
+};
