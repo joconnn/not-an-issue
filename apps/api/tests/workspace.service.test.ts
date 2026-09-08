@@ -90,3 +90,100 @@ test("createWorkspace rolls back when owner membership cannot be created", async
       .execute();
   }
 });
+
+test("getWorkspaces returns every workspace the user belongs to and excludes other users' workspaces", async () => {
+  // Arrange
+  // Create two users to make sure we do not get other users data
+  const userAId = randomUUID();
+  const userBId = randomUUID();
+
+  const userAEmail = `${userAId}@example.test`;
+  const userBEmail = `${userBId}@example.test`;
+
+  const workspaceIds: string[] = [];
+
+  try {
+    await pool.query(
+      `
+        insert into "user" ("id", "name", "email", "emailVerified")
+        values ($1, $2, $3, $4)
+      `,
+      [userAId, "Test User A", userAEmail, false],
+    );
+
+    await pool.query(
+      `
+        insert into "user" ("id", "name", "email", "emailVerified")
+        values ($1, $2, $3, $4)
+      `,
+      [userBId, "Test User B", userBEmail, false],
+    );
+
+    const userAWorkspaceOne = await workspaceService.createWorkspace({
+      userId: userAId,
+      name: `User A Workspace One ${randomUUID()}`,
+    });
+
+    workspaceIds.push(userAWorkspaceOne.id);
+
+    const userAWorkspaceTwo = await workspaceService.createWorkspace({
+      userId: userAId,
+      name: `User A Workspace Two ${randomUUID()}`,
+    });
+
+    workspaceIds.push(userAWorkspaceTwo.id);
+
+    const userBWorkspace = await workspaceService.createWorkspace({
+      userId: userBId,
+      name: `User B Workspace ${randomUUID()}`,
+    });
+
+    workspaceIds.push(userBWorkspace.id);
+
+    // Act
+    const workspaces = await workspaceService.getWorkspaces({
+      userId: userAId,
+    });
+
+    // Assert
+    expect(workspaces).toHaveLength(2);
+
+    expect(workspaces).toEqual(
+      expect.arrayContaining([
+        {
+          id: userAWorkspaceOne.id,
+          name: userAWorkspaceOne.name,
+          role: "owner",
+          created_at: userAWorkspaceOne.created_at,
+        },
+        {
+          id: userAWorkspaceTwo.id,
+          name: userAWorkspaceTwo.name,
+          role: "owner",
+          created_at: userAWorkspaceTwo.created_at,
+        },
+      ]),
+    );
+
+    expect(
+      workspaces.some((workspace) => workspace.id === userBWorkspace.id),
+    ).toBe(false);
+  } finally {
+    try {
+      if (workspaceIds.length > 0) {
+        await db
+          .deleteFrom("workspace")
+          .where("id", "in", workspaceIds)
+          .execute();
+      }
+    } finally {
+      await pool.query(
+        `
+          delete from "user"
+          where "id" in ($1, $2)
+        `,
+        [userAId, userBId],
+      );
+    }
+  }
+});
