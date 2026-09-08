@@ -21,4 +21,11 @@ export const workspaceRoutes: FastifyPluginAsyncTypebox = async (app) => {
       return reply.code(201).send(workspace);
     },
   );
+  app.get("/", async (request, reply) => {
+    const userId = request.authSession.user.id;
+
+    const workspaces = await workspaceService.getWorkspaces({ userId });
+    // Omit 200 code as fastify sends by default
+    return reply.send(workspaces);
+  });
 };
