@@ -1,5 +1,5 @@
 import { db } from "@not-an-issue/db";
-import { CreateProjectInput } from "./types.js";
+import { CreateProjectInput, GetProjectsInput } from "./types.js";
 import { ProjectCreationForbiddenError } from "./project.errors.js";
 
 class ProjectService {
@@ -31,6 +31,16 @@ class ProjectService {
       .executeTakeFirstOrThrow();
 
     return project;
+  }
+
+  async getProjects({ workspaceId }: GetProjectsInput) {
+    const projects = await db
+      .selectFrom("project")
+      .selectAll()
+      .where("project.workspace_id", "=", workspaceId)
+      .execute();
+
+    return projects;
   }
 }
 

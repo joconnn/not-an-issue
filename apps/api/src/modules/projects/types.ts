@@ -5,3 +5,7 @@ export interface CreateProjectInput {
   name: string;
   workspaceId: string;
 }
+
+export interface GetProjectsInput {
+  workspaceId: string;
+}

@@ -12,7 +12,7 @@ export const CreateProjectBody = Type.Object(
   },
 );
 
-export const CreateProjectParams = Type.Object({
+export const ProjectParams = Type.Object({
   workspaceId: Type.String({
     format: "uuid",
   }),

@@ -1,5 +1,5 @@
 import { type FastifyPluginAsyncTypebox } from "@fastify/type-provider-typebox";
-import { CreateProjectBody, CreateProjectParams } from "./projects.schema.js";
+import { CreateProjectBody, ProjectParams } from "./projects.schema.js";
 import { projectService } from "./project.service.js";
 import { ProjectCreationForbiddenError } from "./project.errors.js";
 
@@ -9,7 +9,7 @@ export const projectRoutes: FastifyPluginAsyncTypebox = async (app) => {
     {
       schema: {
         body: CreateProjectBody,
-        params: CreateProjectParams,
+        params: ProjectParams,
       },
     },
     async (request, reply) => {
@@ -37,6 +37,21 @@ export const projectRoutes: FastifyPluginAsyncTypebox = async (app) => {
         // We must throw the error otherwise kysely error will be swallowed
         throw e;
       }
+    },
+  );
+  app.get(
+    "/:workspaceId/projects",
+    {
+      schema: {
+        params: ProjectParams,
+      },
+    },
+    async (request, reply) => {
+      const { workspaceId } = request.params;
+
+      const projects = await projectService.getProjects({ workspaceId });
+
+      return reply.code(200).send(projects);
     },
   );
 };
