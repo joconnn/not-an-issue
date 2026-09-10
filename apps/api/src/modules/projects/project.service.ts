@@ -1,6 +1,9 @@
 import { db } from "@not-an-issue/db";
 import { CreateProjectInput, GetProjectsInput } from "./types.js";
-import { ProjectCreationForbiddenError } from "./project.errors.js";
+import {
+  ProjectCreationForbiddenError,
+  ProjectGetForbiddenError,
+} from "./project.errors.js";
 
 class ProjectService {
   // create project needs: name and user id
@@ -33,7 +36,17 @@ class ProjectService {
     return project;
   }
 
-  async getProjects({ workspaceId }: GetProjectsInput) {
+  async getProjects({ userId, workspaceId }: GetProjectsInput) {
+    const permission = await db
+      .selectFrom("workspace_member")
+      .where("user_id", "=", userId)
+      .where("workspace_id", "=", workspaceId)
+      .executeTakeFirst();
+
+    if (!permission) {
+      throw new ProjectGetForbiddenError();
+    }
+
     const projects = await db
       .selectFrom("project")
       .selectAll()

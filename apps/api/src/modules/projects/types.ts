@@ -7,5 +7,6 @@ export interface CreateProjectInput {
 }
 
 export interface GetProjectsInput {
+  userId: AuthSession["user"]["id"];
   workspaceId: string;
 }

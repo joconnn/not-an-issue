@@ -1,7 +1,10 @@
 import { type FastifyPluginAsyncTypebox } from "@fastify/type-provider-typebox";
 import { CreateProjectBody, ProjectParams } from "./projects.schema.js";
 import { projectService } from "./project.service.js";
-import { ProjectCreationForbiddenError } from "./project.errors.js";
+import {
+  ProjectCreationForbiddenError,
+  ProjectGetForbiddenError,
+} from "./project.errors.js";
 
 export const projectRoutes: FastifyPluginAsyncTypebox = async (app) => {
   app.post(
@@ -47,11 +50,23 @@ export const projectRoutes: FastifyPluginAsyncTypebox = async (app) => {
       },
     },
     async (request, reply) => {
+      const userId = request.authSession.user.id;
       const { workspaceId } = request.params;
 
-      const projects = await projectService.getProjects({ workspaceId });
-
-      return reply.code(200).send(projects);
+      try {
+        const projects = await projectService.getProjects({
+          userId,
+          workspaceId,
+        });
+        return reply.code(200).send(projects);
+      } catch (e) {
+        if (e instanceof ProjectGetForbiddenError) {
+          return reply.code(403).send({
+            error: "Forbidden",
+            message: e.message,
+          });
+        }
+      }
     },
   );
 };
