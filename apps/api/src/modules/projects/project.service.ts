@@ -39,6 +39,7 @@ class ProjectService {
   async getProjects({ userId, workspaceId }: GetProjectsInput) {
     const permission = await db
       .selectFrom("workspace_member")
+      .select(["workspace_id", "user_id"])
       .where("user_id", "=", userId)
       .where("workspace_id", "=", workspaceId)
       .executeTakeFirst();
@@ -51,6 +52,7 @@ class ProjectService {
       .selectFrom("project")
       .selectAll()
       .where("project.workspace_id", "=", workspaceId)
+      .orderBy("project.created_at", "desc")
       .execute();
 
     return projects;
