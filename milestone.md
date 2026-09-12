@@ -1,16 +1,3 @@
-6. Add issues
-
-Implement:
-
-```text
-POST  /api/projects/:projectId/issues
-GET   /api/projects/:projectId/issues
-GET   /api/issues/:issueId
-PATCH /api/issues/:issueId
-```
-
-For the MVP, updating the title, description, or status is sufficient.
-
 7. Add comments
 
 Implement:
