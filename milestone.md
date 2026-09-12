@@ -1,14 +1,3 @@
-5. Add projects
-
-Implement the minimum:
-
-```text
-POST /api/workspaces/:workspaceId/projects
-GET  /api/workspaces/:workspaceId/projects
-```
-
-Before either operation, verify that the authenticated user belongs to the workspace.
-
 6. Add issues
 
 Implement:
