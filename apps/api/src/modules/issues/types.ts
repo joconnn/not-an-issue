@@ -11,3 +11,16 @@ export interface GetProjectIssuesInput {
   userId: AuthSession["user"]["id"];
   projectId: string;
 }
+
+export interface GetIssueInput {
+  userId: AuthSession["user"]["id"];
+  issueId: string;
+}
+
+export interface UpdateIssueInput {
+  userId: AuthSession["user"]["id"];
+  issueId: string;
+  title?: string;
+  description?: string | null;
+  status?: "open" | "closed";
+}
