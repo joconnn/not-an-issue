@@ -39,6 +39,8 @@ class IssueService {
       })
       .returningAll()
       .executeTakeFirstOrThrow();
+
+    return newIssue;
   }
 
   async getProjectIssues({ userId, projectId }: GetProjectIssuesInput) {

@@ -1,26 +1,19 @@
 import { randomUUID } from "node:crypto";
 import { expect, test } from "vitest";
-import { db, pool } from "@not-an-issue/db";
+import { db } from "@not-an-issue/db";
 import { workspaceService } from "../src/modules/workspace/workspace.service.js";
+import { createTestUser, deleteTestUsers } from "./helpers/test-users.js";
 
 test("createWorkspace creates a workspace and adds the user as owner", async () => {
   // Arrange Values
 
   const userId = randomUUID();
-  const email = `${userId}@example.test`;
 
   const workspaceName = `Test Workspace ${randomUUID()}`;
 
   let workspaceId: string | undefined;
 
-  // Create our better auth user row
-  await pool.query(
-    `
-        insert into "user" ("id", "name", "email", "emailVerified")
-        values ($1, $2, $3, $4)
-      `,
-    [userId, "Test User", email, false],
-  );
+  await createTestUser(userId);
 
   try {
     // Act
@@ -55,9 +48,7 @@ test("createWorkspace creates a workspace and adds the user as owner", async () 
     if (workspaceId) {
       await db.deleteFrom("workspace").where("id", "=", workspaceId).execute();
     }
-    // Ensure the user is removed even if workspace cleanup fails.
-    // Kysely does not have access to better auth tables so write inline sql query
-    await pool.query(`delete from "user" where "id" = $1`, [userId]);
+    await deleteTestUsers([userId]);
   }
 });
 
@@ -97,27 +88,11 @@ test("getWorkspaces returns every workspace the user belongs to and excludes oth
   const userAId = randomUUID();
   const userBId = randomUUID();
 
-  const userAEmail = `${userAId}@example.test`;
-  const userBEmail = `${userBId}@example.test`;
-
   const workspaceIds: string[] = [];
 
   try {
-    await pool.query(
-      `
-        insert into "user" ("id", "name", "email", "emailVerified")
-        values ($1, $2, $3, $4)
-      `,
-      [userAId, "Test User A", userAEmail, false],
-    );
-
-    await pool.query(
-      `
-        insert into "user" ("id", "name", "email", "emailVerified")
-        values ($1, $2, $3, $4)
-      `,
-      [userBId, "Test User B", userBEmail, false],
-    );
+    await createTestUser(userAId, "Test User A");
+    await createTestUser(userBId, "Test User B");
 
     const userAWorkspaceOne = await workspaceService.createWorkspace({
       userId: userAId,
@@ -177,13 +152,7 @@ test("getWorkspaces returns every workspace the user belongs to and excludes oth
           .execute();
       }
     } finally {
-      await pool.query(
-        `
-          delete from "user"
-          where "id" in ($1, $2)
-        `,
-        [userAId, userBId],
-      );
+      await deleteTestUsers([userAId, userBId]);
     }
   }
 });

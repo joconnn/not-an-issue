@@ -1,12 +1,13 @@
 import { expect, test } from "vitest";
 import { randomUUID } from "node:crypto";
-import { db, pool } from "@not-an-issue/db";
+import { db } from "@not-an-issue/db";
 import { workspaceService } from "../src/modules/workspace/workspace.service";
 import { projectService } from "../src/modules/projects/project.service";
 import {
   ProjectCreationForbiddenError,
   ProjectGetForbiddenError,
 } from "../src/modules/projects/project.errors";
+import { createTestUser, deleteTestUsers } from "./helpers/test-users.js";
 
 test("createProject creates a project and returns the project row", async () => {
   // create our user
@@ -16,20 +17,12 @@ test("createProject creates a project and returns the project row", async () => 
 
   // Arrange values
   const userId = randomUUID();
-  const email = `${userId}@example.test`;
 
   const workspaceName = `Test Workspace ${randomUUID()}`;
 
   let workspaceId: string | undefined;
 
-  // Create our better auth user row
-  await pool.query(
-    `
-        insert into "user" ("id", "name", "email", "emailVerified")
-        values ($1, $2, $3, $4)
-      `,
-    [userId, "Test User", email, false],
-  );
+  await createTestUser(userId);
 
   try {
     const workspace = await workspaceService.createWorkspace({
@@ -57,35 +50,20 @@ test("createProject creates a project and returns the project row", async () => 
           .execute();
       }
     } finally {
-      await pool.query(`delete from "user" where "id" = $1`, [userId]);
+      await deleteTestUsers([userId]);
     }
   }
 });
 
 test("createProject throws error when role is not owner or member", async () => {
   const userA = randomUUID();
-  const emailA = `${userA}@example.test`;
   const userB = randomUUID();
-  const emailB = `${userB}@example.test`;
   const workspaceName = `Test Workspace ${randomUUID()}`;
 
   let workspaceId: string | undefined;
 
-  // Create our better auth user row
-  await pool.query(
-    `
-        insert into "user" ("id", "name", "email", "emailVerified")
-        values ($1, $2, $3, $4)
-      `,
-    [userA, "Test User", emailA, false],
-  );
-  await pool.query(
-    `
-        insert into "user" ("id", "name", "email", "emailVerified")
-        values ($1, $2, $3, $4)
-      `,
-    [userB, "Test User", emailB, false],
-  );
+  await createTestUser(userA);
+  await createTestUser(userB);
 
   try {
     const workspace = await workspaceService.createWorkspace({
@@ -138,28 +116,19 @@ test("createProject throws error when role is not owner or member", async () => 
           .execute();
       }
     } finally {
-      await pool.query(`delete from "user" where "id" = $1`, [userA]);
-      await pool.query(`delete from "user" where "id" = $1`, [userB]);
+      await deleteTestUsers([userA, userB]);
     }
   }
 });
 
 test("getProjects returns all projects that you are a workspace member in", async () => {
   const userId = randomUUID();
-  const email = `${userId}@example.test`;
 
   const workspaceName = `Test Workspace ${randomUUID()}`;
 
   let workspaceId: string | undefined;
 
-  // Create our better auth user row
-  await pool.query(
-    `
-        insert into "user" ("id", "name", "email", "emailVerified")
-        values ($1, $2, $3, $4)
-      `,
-    [userId, "Test User", email, false],
-  );
+  await createTestUser(userId);
 
   try {
     const workspace = await workspaceService.createWorkspace({
@@ -189,35 +158,20 @@ test("getProjects returns all projects that you are a workspace member in", asyn
           .execute();
       }
     } finally {
-      await pool.query(`delete from "user" where "id" = $1`, [userId]);
+      await deleteTestUsers([userId]);
     }
   }
 });
 
 test("getProjects throws error when you do not have a role in the workspace", async () => {
   const userA = randomUUID();
-  const emailA = `${userA}@example.test`;
   const userB = randomUUID();
-  const emailB = `${userB}@example.test`;
   const workspaceName = `Test Workspace ${randomUUID()}`;
 
   let workspaceId: string | undefined;
 
-  // Create our better auth user row
-  await pool.query(
-    `
-        insert into "user" ("id", "name", "email", "emailVerified")
-        values ($1, $2, $3, $4)
-      `,
-    [userA, "Test User", emailA, false],
-  );
-  await pool.query(
-    `
-        insert into "user" ("id", "name", "email", "emailVerified")
-        values ($1, $2, $3, $4)
-      `,
-    [userB, "Test User", emailB, false],
-  );
+  await createTestUser(userA);
+  await createTestUser(userB);
 
   try {
     const workspace = await workspaceService.createWorkspace({
@@ -250,8 +204,7 @@ test("getProjects throws error when you do not have a role in the workspace", as
           .execute();
       }
     } finally {
-      await pool.query(`delete from "user" where "id" = $1`, [userA]);
-      await pool.query(`delete from "user" where "id" = $1`, [userB]);
+      await deleteTestUsers([userA, userB]);
     }
   }
 });
