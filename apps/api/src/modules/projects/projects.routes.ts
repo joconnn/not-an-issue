@@ -66,6 +66,7 @@ export const projectRoutes: FastifyPluginAsyncTypebox = async (app) => {
             message: e.message,
           });
         }
+        throw e;
       }
     },
   );
