@@ -6,11 +6,11 @@ export function SignUp() {
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const navigate = useNavigate();
 
   const submitNewUser = async (e: React.SubmitEvent<HTMLFormElement>) => {
     e.preventDefault();
 
-    const navigate = useNavigate();
     const formData = {
       name,
       email,
@@ -27,6 +27,7 @@ export function SignUp() {
         },
         onSuccess: () => {
           //redirect to the dashboard or sign in page
+          navigate("/dashboard");
         },
         onError: (ctx) => {
           // display the error message
@@ -69,7 +70,10 @@ export function SignUp() {
         </label>
       </div>
       <div>
-        <button className="border px-4 py-2 rounded-sm bg-gray-300">
+        <button
+          type="submit"
+          className="border px-4 py-2 rounded-sm bg-gray-300"
+        >
           Submit
         </button>
       </div>
