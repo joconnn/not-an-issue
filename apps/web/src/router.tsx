@@ -1,6 +1,7 @@
 import { createBrowserRouter, Outlet } from "react-router";
 import { Marketing } from "./Marketing";
 import { SignIn, SignUp } from "./features/auth";
+import { protectedRouteMiddleware } from "./middleware";
 export const router = createBrowserRouter([
   {
     path: "/",
@@ -14,6 +15,7 @@ export const router = createBrowserRouter([
     ],
   },
   {
+    middleware: [protectedRouteMiddleware],
     Component: () => (
       <div>
         <h1>Protected layout</h1>
