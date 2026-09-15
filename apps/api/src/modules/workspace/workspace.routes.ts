@@ -1,13 +1,20 @@
 import { type FastifyPluginAsyncTypebox } from "@fastify/type-provider-typebox";
+import {
+  CreateWorkspaceRequestSchema,
+  CreateWorkspaceResponseSchema,
+  WorkspaceListResponseSchema,
+} from "@not-an-issue/contracts/workspaces";
 import { workspaceService } from "./workspace.service.js";
-import { CreateWorkspaceBody } from "./workspace.schema.js";
 
 export const workspaceRoutes: FastifyPluginAsyncTypebox = async (app) => {
   app.post(
     "/",
     {
       schema: {
-        body: CreateWorkspaceBody,
+        body: CreateWorkspaceRequestSchema,
+        response: {
+          201: CreateWorkspaceResponseSchema,
+        },
       },
     },
     async (request, reply) => {
@@ -21,11 +28,20 @@ export const workspaceRoutes: FastifyPluginAsyncTypebox = async (app) => {
       return reply.code(201).send(workspace);
     },
   );
-  app.get("/", async (request, reply) => {
-    const userId = request.authSession.user.id;
+  app.get(
+    "/",
+    {
+      schema: {
+        response: {
+          200: WorkspaceListResponseSchema,
+        },
+      },
+    },
+    async (request, reply) => {
+      const userId = request.authSession.user.id;
 
-    const workspaces = await workspaceService.getWorkspaces({ userId });
-    // Omit 200 code as fastify sends by default
-    return reply.send(workspaces);
-  });
+      const workspaces = await workspaceService.getWorkspaces({ userId });
+      return reply.send(workspaces);
+    },
+  );
 };

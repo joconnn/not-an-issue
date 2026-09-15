@@ -43,7 +43,8 @@ class WorkspaceService {
       .selectFrom("workspace_member")
       // Join on workspace table using the same keys from both tables
       .innerJoin("workspace", "workspace_member.workspace_id", "workspace.id")
-      // Select the columns we want to return
+      // Internal service callers also use membership metadata. The route's
+      // response schema limits the public HTTP response to id and name.
       .select([
         "workspace.id",
         "workspace.name",
