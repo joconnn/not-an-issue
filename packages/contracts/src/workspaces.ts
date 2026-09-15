@@ -35,9 +35,7 @@ export type CreateWorkspaceResponse = Static<
 >;
 
 export const WorkspaceListResponseSchema = Type.Array(WorkspaceSummarySchema);
-export type WorkspaceListResponse = Static<
-  typeof WorkspaceListResponseSchema
->;
+export type WorkspaceListResponse = Static<typeof WorkspaceListResponseSchema>;
 
 export function parseCreateWorkspaceResponse(
   value: unknown,
